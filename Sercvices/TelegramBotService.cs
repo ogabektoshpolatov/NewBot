@@ -13,6 +13,7 @@ public class TelegramBotService : BackgroundService
     public TelegramBotService(IConfiguration configuration, ILogger<TelegramBotService> logger)
     {
         var token = configuration["TelegramBot:Token"];
+        Console.WriteLine("token");
         _botClient = new TelegramBotClient(token ?? throw new NullReferenceException(nameof(token)));
         _logger = logger;
     }
