@@ -1,4 +1,5 @@
 using bot.Sercvices;
+using Telegram.Bot;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<TelegramBotService>();
+
+builder.Services.AddSingleton<ITelegramBotClient>(
+    new TelegramBotClient("5253246383:AAEAV5JYLkaElN4jzQ1OJb2a27ABQHa2kq4"));
 
 var app = builder.Build();
 
@@ -24,5 +28,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapGet("/health", () => Results.Ok("OK"));
 app.Run();
