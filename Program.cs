@@ -1,6 +1,7 @@
+using bot.Data;
 using bot.Handlers;
 using bot.Sercvices;
-using Telegram.Bot;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddHostedService<TelegramBotService>();
-builder.Services.AddSingleton<ICommandHandler, StartCommandHandler>();
+builder.Services.AddScoped<ICommandHandler, StartCommandHandler>();
+
+builder.Services.AddDbContext<AppDbContext>(options => 
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
