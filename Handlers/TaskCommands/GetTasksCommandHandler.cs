@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace bot.Handlers.TaskCommands;
 
@@ -21,17 +22,23 @@ public class GetTasksCommandHandler(AppDbContext dbContext) : ICommandHandler
             return;
         }
 
-        var text = "📋 *My Tasks*\n\n";
+        var buttons = dbTasks
+            .Select(t => new[]
+            {
+                InlineKeyboardButton.WithCallbackData(
+                    text: t.Name ?? "NoName",
+                    callbackData: $"{t.Id}"
+                    
+                )
+            })
+            .ToList();
 
-        for (int i = 0; i < dbTasks.Count; i++)
-        {
-            text += $"{i + 1}. {dbTasks[i].Name}\n";
-        }
+        var keyboard = new InlineKeyboardMarkup(buttons);
         
         await botClient.SendMessage(
             chatId: message.Chat.Id,
-            text: text,
-            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+            text: "📋 My Tasks",
+            replyMarkup: keyboard,
             cancellationToken: cancellationToken);
     }
 }

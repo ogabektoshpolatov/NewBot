@@ -43,12 +43,37 @@ public class TelegramBotService : BackgroundService
     
     private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        if (update.Message is not { } message) return;
+        switch (update.Type)
+        {
+            case UpdateType.Message:
+                await HandleMessageUpdate(botClient, update.Message!, cancellationToken);
+                break;
+
+            case UpdateType.CallbackQuery:
+                await HandleCallbackUpdate(botClient, update.CallbackQuery!, cancellationToken);
+                break;
+        }
+    }
+
+    private async Task HandleCallbackUpdate(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
+    {
+        if(callbackQuery.Data is not {} callback)
+        {
+            await botClient.SendMessage(chatId:callbackQuery.From.Id, text:"Ishlamadi", cancellationToken:cancellationToken);
+        }
+        else
+        {
+            await botClient.SendMessage(chatId:callbackQuery.From.Id, text:"Ishladi", cancellationToken:cancellationToken);
+        }
+    }
+
+    private async Task HandleMessageUpdate(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
+    {
         if (message.Text is not { } messageText) return;
 
-        messageText = NormalizeMenuCommand(message.Text);
+        messageText = NormalizeMenuCommand(messageText);
         _logger.LogInformation($"Received '{messageText}' from {message.From?.Username}");
-        
+
         using var scope = _serviceProvider.CreateScope();
         var sessionService = scope.ServiceProvider.GetRequiredService<SessionService>();
         var session = sessionService.GetOrCreateSession(message.Chat.Id);
@@ -56,8 +81,10 @@ public class TelegramBotService : BackgroundService
         if (messageText.StartsWith('/'))
         {
             sessionService.ClearSession(message.Chat.Id);
+
             var commandHandlers = scope.ServiceProvider.GetServices<ICommandHandler>();
-            var handler = commandHandlers.FirstOrDefault(h => h.Command.Equals(messageText, StringComparison.OrdinalIgnoreCase));
+            var handler = commandHandlers
+                .FirstOrDefault(h => h.Command.Equals(messageText, StringComparison.OrdinalIgnoreCase));
 
             if (handler != null)
             {
@@ -65,13 +92,13 @@ public class TelegramBotService : BackgroundService
                 return;
             }
         }
-        
+
         if (!string.IsNullOrEmpty(session.CurrentState))
         {
             await HandleStateLogic(botClient, message, session, sessionService, cancellationToken);
             return;
         }
-        
+
         await botClient.SendMessage(
             chatId: message.Chat.Id,
             text: "❌ Tushunmadim. /help ni yozing.",
