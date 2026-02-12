@@ -2,7 +2,7 @@
 
 public class TaskUser
 {
-    public long Id { get; set; } 
+    public long Id { get; set; }
     public int TaskId { get; set; }
     public Task Task { get; set; } = null!;
     public long UserId { get; set; }
@@ -10,4 +10,5 @@ public class TaskUser
     public int QueuePosition { get; set; }
     public bool IsActive { get; set; } = true;
     public bool IsCurrent { get; set; } = false;
+    public DateTime? UserQueueTime { get; set; }
 }

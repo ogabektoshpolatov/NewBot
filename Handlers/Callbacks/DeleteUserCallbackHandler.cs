@@ -21,10 +21,13 @@ public class DeleteUserCallbackHandler(AppDbContext dbContext) : ICallbackHandle
         
         var task = await dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == taskId, cancellationToken);
         
-        var taskUsers = await dbContext.Users
-            .Where(u => dbContext.TaskUsers
-                .Any(tu => tu.TaskId == taskId && tu.UserId == u.UserId && tu.IsActive))
+        var taskUsers = await dbContext.TaskUsers
+            .Where(tu => tu.TaskId == taskId && tu.IsActive)
+            .OrderBy(tu => tu.QueuePosition) 
+            .Include(tu => tu.User)
             .ToListAsync(cancellationToken);
+        
+        var users  = taskUsers.Select(tu => tu.User).ToList();
         
         await botClient.EditMessageText(
             chatId: callbackQuery.Message!.Chat.Id,
@@ -35,10 +38,9 @@ public class DeleteUserCallbackHandler(AppDbContext dbContext) : ICallbackHandle
              👥 Userlar soni: {taskUsers.Count()}
              ⏰ Vaqt: {task.ScheduleTime:dd.MM.yyyy HH:mm}
              
-             ! O`chirmoqchi bo`lgan foydalanavuvchini tanlang.
+             ! Ochirmoqchi bo`lgan foydalanavuvchini tanlang.
              """,
-            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
-            replyMarkup: BotKeyboards.ViewUserList(taskId, "removeUser", taskUsers),
+            replyMarkup: BotKeyboards.ViewUserList(taskId, "removeUser", users),
             cancellationToken: cancellationToken
         );
     }
@@ -62,6 +64,30 @@ public class DeleteUserConfirmCallbackHandler(AppDbContext dbContext) : ICallbac
 
         if (taskUser != null)
         {
+            if (taskUser.IsCurrent)
+            {
+                var queuePosition = taskUser.QueuePosition;
+                var nextTaskUser = await dbContext.TaskUsers.Where(tu => tu.QueuePosition > queuePosition)
+                    .OrderBy(tu => tu.QueuePosition)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (nextTaskUser != null)
+                {
+                    nextTaskUser.IsCurrent = true;
+                    nextTaskUser.UserQueueTime = DateTime.UtcNow;
+                    await dbContext.SaveChangesAsync(cancellationToken);
+                }
+                else
+                {
+                    if (await dbContext.TaskUsers.AnyAsync(tu => tu.TaskId == taskId, cancellationToken))
+                    {
+                        var firstTaskUser = await dbContext.TaskUsers.FirstOrDefaultAsync(tu => tu.TaskId == taskId, cancellationToken);
+                        firstTaskUser!.IsCurrent = true;
+                        firstTaskUser!.UserQueueTime = DateTime.UtcNow;
+                        await dbContext.SaveChangesAsync(cancellationToken);
+                    }
+                }
+            }
             dbContext.Remove(taskUser);
             await dbContext.SaveChangesAsync(cancellationToken);
         }

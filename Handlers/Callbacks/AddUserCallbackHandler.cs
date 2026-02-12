@@ -62,11 +62,23 @@ public class AddUserToTaskConfirmCallbackHandler(AppDbContext dbContext, TaskUiR
         });
         await dbContext.SaveChangesAsync(cancellationToken);
         
-        var availableUsers = await dbContext.Users
-            .Where(u => !dbContext.TaskUsers
-                .Any(tu => tu.TaskId == taskId && tu.UserId == u.UserId && tu.IsActive))
-            .ToListAsync(cancellationToken);
+        // var availableUsers = await dbContext.Users
+        //     .Where(u => !dbContext.TaskUsers
+        //         .Any(tu => tu.TaskId == taskId && tu.UserId == u.UserId && tu.IsActive))
+        //     .ToListAsync(cancellationToken);
         
+        var availableUsers = await dbContext.Users
+            .GroupJoin(
+                dbContext.TaskUsers.Where(tu => tu.TaskId == taskId && tu.IsActive),
+                u => u.UserId,
+                tu => tu.UserId,
+                (u, tus) => new { User = u, TaskUsers = tus }
+            )
+            .Where(x => !x.TaskUsers.Any()) 
+            .OrderBy(x => x.User.FirstName ?? x.User.Username) 
+            .Select(x => x.User)
+            .ToListAsync(cancellationToken);
+
         await taskUiRenderer.RenderTaskWithUsersAsync(
             botClient,
             callbackQuery,

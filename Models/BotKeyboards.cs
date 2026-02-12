@@ -10,9 +10,9 @@ public class BotKeyboards
 {
     public static InlineKeyboardMarkup TaskMenu(int taskId) => new(new[]
     {
-        new[] { InlineKeyboardButton.WithCallbackData("➕ User qo'shish",     CB.AddUser(taskId))    },
+        new[] { InlineKeyboardButton.WithCallbackData("👥 Navbatchilikni ko`rish", CB.ViewUsers(taskId)) },
+        new[] { InlineKeyboardButton.WithCallbackData("➕ User qo'shish",     CB.AddUser(taskId)) },
         new[] { InlineKeyboardButton.WithCallbackData("➖ User o'chirish",    CB.RemoveUser(taskId)) },
-        new[] { InlineKeyboardButton.WithCallbackData("👥 Userlarni ko'rish", CB.ViewUsers(taskId))  }
     });
     
     public static InlineKeyboardMarkup BackToTask(int taskId) => new(new[]
@@ -27,7 +27,7 @@ public class BotKeyboards
                 new[]
                 {
                     InlineKeyboardButton.WithCallbackData(
-                        $"👤 {u.Username}",
+                        $"👤 {u.FirstName}",
                         $"task:{taskId}:{order}:{u.UserId}:confirm")
                 })
             .ToList();
@@ -39,4 +39,11 @@ public class BotKeyboards
 
         return new InlineKeyboardMarkup(buttons);
     }
+    
+    public static InlineKeyboardMarkup QueueHandleMenu(int taskId) => new(new[]
+    {
+        new[] { InlineKeyboardButton.WithCallbackData("Navbatni surish",     CB.AddUser(taskId)) },
+        new[] { InlineKeyboardButton.WithCallbackData("⬅ Orqaga",    CB.Task(taskId)) },
+    });
+    
 }

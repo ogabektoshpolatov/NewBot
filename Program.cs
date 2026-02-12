@@ -31,6 +31,7 @@ builder.Services.AddScoped<ICallbackHandler, AddUserCallbackHandler>();
 builder.Services.AddScoped<ICallbackHandler, AddUserToTaskConfirmCallbackHandler>();
 builder.Services.AddScoped<ICallbackHandler, DeleteUserCallbackHandler>();
 builder.Services.AddScoped<ICallbackHandler, DeleteUserConfirmCallbackHandler>();
+builder.Services.AddScoped<ICallbackHandler, ViewTaskCallbackHandler>();
 
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
