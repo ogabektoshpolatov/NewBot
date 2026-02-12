@@ -21,7 +21,7 @@ public class BotKeyboards
         new[] { InlineKeyboardButton.WithCallbackData("🔙 Orqaga", CB.Task(taskId)) }
     });
     
-    public static InlineKeyboardMarkup AddUserList(int taskId, List<User> users)
+    public static InlineKeyboardMarkup ViewUserList(int taskId, string order, List<User> users)
     {
         var buttons = users
             .Select(u =>
@@ -29,7 +29,7 @@ public class BotKeyboards
                 {
                     InlineKeyboardButton.WithCallbackData(
                         $"👤 {u.Username}",
-                        $"task:{taskId}:selectUser:{u.UserId}")
+                        $"task:{taskId}:{order}:{u.UserId}:confirm")
                 })
             .ToList();
 

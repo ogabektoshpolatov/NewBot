@@ -60,7 +60,7 @@ public class TelegramBotService : BackgroundService
         var data = callbackQuery.Data;
         if (string.IsNullOrEmpty(data)) return;
         
-        _logger.LogInformation("Callback from @{User}: {Data}", callbackQuery.From.Username, data);
+        _logger.LogInformation("Callback from =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @{User}: {Data}", callbackQuery.From.Username, data);
         
         using var scope = _serviceProvider.CreateScope();
         var handlers = scope.ServiceProvider.GetServices<ICallbackHandler>();

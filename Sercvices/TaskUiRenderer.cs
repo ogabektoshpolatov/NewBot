@@ -19,9 +19,17 @@ public class TaskUiRenderer(AppDbContext dbContext)
         var task = await dbContext.Tasks
             .FirstOrDefaultAsync(t => t.Id == taskId, cancellationToken);
 
-        var userCount = await dbContext.TaskUsers
-            .CountAsync(tu => tu.TaskId == taskId && tu.IsActive, cancellationToken);
+        var users = await dbContext.TaskUsers
+            .Where(tu => tu.TaskId == taskId && tu.IsActive)
+            .Select(tu => tu.User.FirstName) 
+            .ToListAsync(cancellationToken);
 
+        var userCount = users.Count;
+        
+        var userListText = users.Any()
+            ? string.Join("\n", users.Select((u, i) => $"{i + 1}. {u}"))
+            : " ";
+        
         await botClient.EditMessageText(
             chatId: callbackQuery.Message!.Chat.Id,
             messageId: callbackQuery.Message.MessageId,
@@ -30,6 +38,9 @@ public class TaskUiRenderer(AppDbContext dbContext)
              📌 *{task.Name}*
              👥 Userlar soni: {userCount}
              ⏰ Vaqt: {task.ScheduleTime:dd.MM.yyyy HH:mm}
+
+             👤 Userlar:
+             {userListText}
              """,
             parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
             replyMarkup: keyboard,
