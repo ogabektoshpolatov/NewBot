@@ -6,4 +6,5 @@ public class CB
     public static string AddUser(int taskId) => $"task:{taskId}:addUser";
     public static string RemoveUser(int taskId) => $"task:{taskId}:removeUser";
     public static string ViewUsers(int taskId) => $"task:{taskId}:viewUsers";
+    public static string SkipQueue(int taskId) => $"task:{taskId}:skipQueue";
 }

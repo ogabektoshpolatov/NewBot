@@ -9,5 +9,6 @@ public class Task
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public long TelegramGroupId { get; set; }
     public long CreatedUserId { get; set; }
+    public bool SendToGroup { get; set; } = false;
     public ICollection<TaskUser> TaskUsers { get; set; } = new List<TaskUser>();
 }

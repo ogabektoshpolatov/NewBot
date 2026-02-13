@@ -42,8 +42,7 @@ public class BotKeyboards
     
     public static InlineKeyboardMarkup QueueHandleMenu(int taskId) => new(new[]
     {
-        new[] { InlineKeyboardButton.WithCallbackData("Navbatni surish",     CB.AddUser(taskId)) },
-        new[] { InlineKeyboardButton.WithCallbackData("⬅ Orqaga",    CB.Task(taskId)) },
+        new[] { InlineKeyboardButton.WithCallbackData("Navbatni surish",CB.SkipQueue(taskId)) },
+        new[] { InlineKeyboardButton.WithCallbackData("⬅ Orqaga",CB.Task(taskId)) },
     });
-    
 }
