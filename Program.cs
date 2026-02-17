@@ -14,13 +14,17 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<SessionService>();
-builder.Services.AddSingleton<TaskNotificationService>();
+
 builder.Services.AddHostedService<TelegramBotService>();
 builder.Services.AddHostedService<NotificationSchedulerService>();
+builder.Services.AddHostedService<PendingConfirmationChecker>();
+
 builder.Services.AddScoped<TaskUiRenderer>();
+builder.Services.AddScoped<QueueManagementService>();
+
+builder.Services.AddSingleton<SessionService>();
+builder.Services.AddSingleton<TaskNotificationService>();
 builder.Services.AddSingleton<ITelegramBotClient>(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
@@ -48,6 +52,9 @@ builder.Services.AddScoped<ICallbackHandler, SkipQueueCallbackHandler>();
 builder.Services.AddScoped<ICallbackHandler, NotifyCallbackHandler>();
 builder.Services.AddScoped<ICallbackHandler, AssignUserToQueueHandler>();
 builder.Services.AddScoped<ICallbackHandler, AssignUserToQueueConfirmHandler>();
+builder.Services.AddScoped<ICallbackHandler, CompleteTaskCallbackHandler>();
+builder.Services.AddScoped<ICallbackHandler, AcceptQueueCallbackHandler>();
+builder.Services.AddScoped<ICallbackHandler, RejectQueueCallbackHandler>();
 
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

@@ -1,4 +1,5 @@
 ﻿using bot.Data;
+using bot.Models;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
@@ -84,7 +85,7 @@ public class TaskNotificationService(
                     return $"   {position}. {userName}";
                 }
             }));
-        
+
         var message = $"🔔 <b>NAVBATCHILIK BILDIRISH</b>\n\n" +
                       $"━━━━━━━━━━━━━━━━━━━\n" +
                       $"📋 <b>Task:</b> {task.Name}\n" +
@@ -96,13 +97,13 @@ public class TaskNotificationService(
                       $"━━━━━━━━━━━━━━━━━━━\n" +
                       $"📋 <b>Navbatchilik ketma-ketligi:</b>\n\n" +
                       $"{userListText}\n" +
-                      $"━━━━━━━━━━━━━━━━━━━\n\n" +
-                      $"💡 Keyingi navbatchi avtomatik belgilanadi.";
+                      $"━━━━━━━━━━━━━━━━━━━\n\n";
 
         await botClient.SendMessage(
             chatId: task.TelegramGroupId,
             text: message,
-            parseMode: ParseMode.Html);
+            parseMode: ParseMode.Html,
+            replyMarkup:BotKeyboards.TaskCompletionButton(task.Id, currentUser.UserId));
 
         logger.LogInformation($"✅ Xabar yuborildi: Task '{task.Name}' → User {currentUser.FirstName}");
         

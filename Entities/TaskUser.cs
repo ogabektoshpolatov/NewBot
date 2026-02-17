@@ -11,8 +11,6 @@ public class TaskUser
     public bool IsActive { get; set; } = true;
     public bool IsCurrent { get; set; } = false;
     public DateTime? UserQueueTime { get; set; }
-    public DateTime? CompletedAt { get; set; } // Qachon tugatgan
-    public DateTime? PendingConfirmationSince { get; set; } // Taklif yuborilgan vaqt
-    public bool IsPendingConfirmation { get; set; } = false; // Taklif kutilmoqda
-    public int RejectionCount { get; set; } = 0; 
+    public bool IsPendingConfirmation { get; set; } = false;
+    public DateTime? PendingConfirmationSince { get; set; }
 }

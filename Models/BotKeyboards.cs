@@ -45,25 +45,31 @@ public class BotKeyboards
         new[] { InlineKeyboardButton.WithCallbackData("⬅ Orqaga",CB.Task(taskId)) },
     });
     
-    public static InlineKeyboardMarkup TaskCompletionButton(int taskId)
+    public static InlineKeyboardMarkup TaskCompletionButton(int taskId, long userId)
     {
         return new InlineKeyboardMarkup(new[]
         {
             new[]
             {
-                InlineKeyboardButton.WithCallbackData("✅ Bajarildi", $"complete_task:{taskId}")
+                InlineKeyboardButton.WithCallbackData(
+                    "✅ Navbatchilikni tugatdim",
+                    $"complete_task:{taskId}:{userId}")  
             }
         });
     }
-    
-    public static InlineKeyboardMarkup QueueConfirmationButtons(int taskId)
+
+    public static InlineKeyboardMarkup QueueConfirmationButtons(int taskId, long userId)
     {
         return new InlineKeyboardMarkup(new[]
         {
             new[]
             {
-                InlineKeyboardButton.WithCallbackData("✅ Qabul qilaman", $"accept_queue:{taskId}"),
-                InlineKeyboardButton.WithCallbackData("❌ Rad etaman", $"reject_queue:{taskId}")
+                InlineKeyboardButton.WithCallbackData(
+                    "✅ Qabul qilaman", 
+                    $"accept_queue:{taskId}:{userId}"), 
+                InlineKeyboardButton.WithCallbackData(
+                    "❌ Rad etaman",   
+                    $"reject_queue:{taskId}:{userId}")
             }
         });
     }
