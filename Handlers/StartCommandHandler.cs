@@ -29,32 +29,26 @@ public class StartCommandHandler(ILogger<StartCommandHandler> logger, AppDbConte
             
             Console.WriteLine($"User {user.UserId} successfully saved");
         }
-
-        Console.WriteLine("StartCommandHandler.HandleAsync");
+        
         await botClient.SetMyCommands(
             new[]
             {
                 new BotCommand { Command = "start", Description = "Open main menu" },
-                new BotCommand { Command = "getgroupid", Description = "Guruh ID sini olish (faqat guruhda)" },
             },
-            scope: null,
+            scope: new BotCommandScopeAllPrivateChats(),
             languageCode: null,
             cancellationToken: cancellationToken
         );
-
         
-        var keyboard = new InlineKeyboardMarkup(new[]
-        {
+        await botClient.SetMyCommands(
             new[]
             {
-              InlineKeyboardButton.WithCallbackData("\u2b05\ufe0f Left", "button_left"),
-              InlineKeyboardButton.WithCallbackData("\u2b05\ufe0f Right", "button_right"),
+                new BotCommand { Command = "getgroupid", Description = "Guruh ID sini olish (faqat guruhda)" },
             },
-            new[]
-            {
-                InlineKeyboardButton.WithCallbackData("ℹ️ Info", "button_info")
-            }
-        });
+            scope:  new BotCommandScopeAllGroupChats(),
+            languageCode: null,
+            cancellationToken: cancellationToken
+        );
         
         var replykeyboard = new ReplyKeyboardMarkup(new[]
         {

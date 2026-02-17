@@ -84,6 +84,10 @@ public class TelegramBotService : BackgroundService
     {
         if (message.Text is not { } messageText) return;
         
+        if (message.Chat.Type != ChatType.Private && !messageText.StartsWith('/'))
+        {
+            return; // Guruhdan kelgan oddiy xabarlarni ignore qilamiz
+        }
         if (messageText != "/start")
         {
             if (message.From.Id != 5592363193)
