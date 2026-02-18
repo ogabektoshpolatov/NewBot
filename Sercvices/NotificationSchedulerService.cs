@@ -6,8 +6,8 @@ public class NotificationSchedulerService(
 {
     private readonly TimeSpan _checkInterval = TimeSpan.FromMinutes(1);
     
-    private readonly TimeSpan _morningTime = new(20, 12, 0);   // 09:00
-    private readonly TimeSpan _eveningTime = new(23, 12, 0);  // 18:00
+    private readonly TimeSpan _morningTime = new(15, 12, 0);   // 09:00
+    private readonly TimeSpan _eveningTime = new(18, 12, 0);  // 18:00
 
     private DateTime _lastMorningRun = DateTime.MinValue;
     private DateTime _lastEveningRun = DateTime.MinValue;
