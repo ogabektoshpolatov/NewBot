@@ -40,14 +40,14 @@ public class NotificationSchedulerService(
         var currentTime = now.TimeOfDay;
         var today = now.Date;
 
-        if (currentTime >= _morningTime && 
-            currentTime < _morningTime.Add(TimeSpan.FromMinutes(2)) &&
-            _lastMorningRun.Date < today)
-        {
-            logger.LogInformation("🌅 Ertalabki notification jo'natilmoqda...");
-            await notificationService.SendDailyNotifications();
-            _lastMorningRun = now;
-        }
+        // if (currentTime >= _morningTime && 
+        //     currentTime < _morningTime.Add(TimeSpan.FromMinutes(2)) &&
+        //     _lastMorningRun.Date < today)
+        // {
+        //     logger.LogInformation("🌅 Ertalabki notification jo'natilmoqda...");
+        //     await notificationService.SendDailyNotifications();
+        //     _lastMorningRun = now;
+        // }
 
         if (currentTime >= _eveningTime && 
             currentTime < _eveningTime.Add(TimeSpan.FromMinutes(2)) &&
